@@ -61,9 +61,12 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+
     implementation(libs.gson)
     implementation(libs.androidx.hilt.navigation.compose)
     testImplementation(libs.junit)
+    testImplementation(libs.truth)
+    testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
