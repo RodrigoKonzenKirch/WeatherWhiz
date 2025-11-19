@@ -6,6 +6,10 @@ plugins {
     kotlin("kapt")
 }
 
+hilt {
+    enableAggregatingTask = false
+}
+
 android {
     namespace = "com.example.weatherwhiz"
     compileSdk {
@@ -58,6 +62,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
     implementation(libs.gson)
+    implementation(libs.androidx.hilt.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
