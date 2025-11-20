@@ -23,7 +23,7 @@ class WeatherRepositoryImpl @Inject constructor(
                         val response = apiService.getCurrentWeather(city.latitude, city.longitude)
 
                         mapToQuizItem(city, response)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         null
                     }
                 }
