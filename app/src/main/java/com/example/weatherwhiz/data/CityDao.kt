@@ -2,6 +2,7 @@ package com.example.weatherwhiz.data
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
@@ -10,7 +11,7 @@ interface CityDao {
     @Query("SELECT * FROM cities ORDER BY name ASC")
     fun getAllCities(): Flow<List<CityEntity>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(city: CityEntity)
 
     @Query("DELETE FROM cities WHERE isUserAdded = 1 AND id = :cityId")
