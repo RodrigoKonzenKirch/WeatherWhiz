@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -62,10 +61,8 @@ fun MainScreen(
     val state = viewModel.quizState.collectAsStateWithLifecycle()
     val defaultCities = cities
 
-    Scaffold(
-
-    ) { paddingValues ->
-        Box(Modifier.padding(paddingValues).fillMaxSize()) {
+    Scaffold { paddingValues ->
+        Box(modifier.padding(paddingValues).fillMaxSize()) {
             when (state.value){
                 is QuizState.Idle -> IdleView(
                     onStartQuizClicked = { viewModel.loadNewQuiz(defaultCities) }
@@ -86,23 +83,7 @@ fun MainScreen(
         }
 
     }
-
-
-
-//    LazyColumn(modifier = modifier) {
-//        items(cities) { city ->
-//            Text(text = city.name)
-//        }
-//    }
 }
-
-//@Composable
-//fun QuizContentView(
-//    successState: QuizState.Success,
-//    viewModel: MainScreenViewModel
-//) {
-//
-//}
 
 @Composable
 private fun IdleView(
@@ -232,7 +213,7 @@ fun SuccessView(
 
     // Logic: Combine the two lists side-by-side
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         // --- LEFT COLUMN: City Names ---
@@ -242,10 +223,7 @@ fun SuccessView(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(successState.cityNames) { index, cityName ->
-                // We need to look up the cityId to check the match status.
-                // In a real app, you would pass a CityItem object with the ID.
-                // Since we only have the name here, we have to look it up from the original data (an imperfect, but common compromise).
-                val cityId = viewModel.getCityIdForName(cityName) // Requires new ViewModel function
+                val cityId = viewModel.getCityIdForName(cityName)
                 val isMatched = cityId != null && matchedIds.contains(cityId)
 
                 CityNameCard(
@@ -381,7 +359,7 @@ fun WeatherCardComposable(
         ) {
             // --- Icon and Temperature ---
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                // 🔑 Data Transformation: Map WMO code to an Icon
+                // Data Transformation: Map WMO code to an Icon
                 val weatherIcon = remember(card.weatherCode) { mapWmoCodeToIcon(card.weatherCode) }
                 Icon(
                     imageVector = weatherIcon,
@@ -400,7 +378,7 @@ fun WeatherCardComposable(
 
             // --- Details (Humidity, Wind) ---
             Column {
-                // You'll need to pass humidity and wind speed in your WeatherCard data class
+                // Need to pass humidity and wind speed in WeatherCard data class
                 // Text(text = "Humidity: ${card.humidity}%", style = MaterialTheme.typography.bodyMedium)
                 // Text(text = "Wind: ${card.windSpeed} km/h", style = MaterialTheme.typography.bodyMedium)
                 Text(
@@ -412,12 +390,7 @@ fun WeatherCardComposable(
     }
 }
 
-// ----------------------------------------------------
-// Helper Functions for Data Transformation (Must be defined somewhere)
-// ----------------------------------------------------
-
-// Simplified mapping function for the portfolio (WMO codes are integers)
-// This is the implementation that shows intermediate data transformation skill.
+// Simplified mapping function (WMO codes are integers)
 private fun mapWmoCodeToIcon(code: Int): ImageVector {
     return when (code) {
         in 0..1 -> Icons.Default.WbSunny // Clear sky
