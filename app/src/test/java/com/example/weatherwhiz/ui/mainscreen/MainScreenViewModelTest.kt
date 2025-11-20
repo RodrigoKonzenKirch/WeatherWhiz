@@ -59,18 +59,9 @@ class MainScreenViewModelTest {
         QuizItem(cityId = 2, cityName = "Paris", temperature = 20.0, temperatureUnit = "°C", humidity = 60, windSpeed = 5.0, windSpeedUnit = "km/h", weatherCode = 1)
     )
 
-    // A simulated successful state, where lists are shuffled
-    // We need to know the index mapping for the test:
-    // Assume after shuffling, London (ID 1) is at index 0 of names, and its weather card (ID 1) is at index 1 of weather cards.
-    // And Paris (ID 2) is at index 1 of names, and its weather card (ID 2) is at index 0 of weather cards.
-    private val shuffledNames = listOf("London", "Paris") // Index 0 is ID 1, Index 1 is ID 2
-    private val shuffledWeatherCards = listOf(
-        WeatherCard(cityId = 2, temperature = 20.0, weatherCode = 1), // Index 0 is Paris's weather
-        WeatherCard(cityId = 1, temperature = 15.0, weatherCode = 3)  // Index 1 is London's weather
-    )
 
     // Helper function to load data and wait for Success state
-    private suspend fun setupSuccessfulLoad() {
+    private fun setupSuccessfulLoad() {
         coEvery { mockRepository.fetchQuizData(any()) } coAnswers {
             quizItems // Returns data immediately (we don't need delay for match logic test)
         }
@@ -134,7 +125,7 @@ class MainScreenViewModelTest {
     @Test
     fun loadNewQuiz_repositoryThrowsException_emitsLoadingThenError() = runTest {
 
-        // Arrange: Repository throws an exception (e.g., critical network failure)
+        // Arrange: Repository throws an exception
         coEvery { mockRepository.fetchQuizData(selectedCities) } coAnswers{
             delay(1)
             throw Exception("Critical Failure")
@@ -180,17 +171,20 @@ class MainScreenViewModelTest {
         assertEquals("Could not fetch data for any selected cities.", (finalState as QuizState.Error).message)
     }
 
-    // --- TEST SCENARIO 3: Correct Match Verification ---
     @Test
     fun checkMatch_correctGuess_updatesMatchedIds() = runTest {
         // Arrange: Load the data and set the state to Success
         setupSuccessfulLoad()
 
+        val successState = viewModel.quizState.value as QuizState.Success
+        val londonNameIndex = successState.cityNames.indexOf("London")
+        val londonWeatherIndex = successState.weatherCards.indexOfFirst { it.cityId == 1 }
+
         // Assert 1 (Initial): Matched IDs should be empty
         assertTrue(viewModel.matchedCityIds.value.isEmpty())
 
-        // Act: Make a correct match (London Name at index 0, London Weather Card at index 1)
-        viewModel.checkMatch(nameIndex = 0, weatherIndex = 1)
+        // Act: Make a correct match (London Name index, London Weather Card index)
+        viewModel.checkMatch(nameIndex = londonNameIndex, weatherIndex = londonWeatherIndex)
 
         // Assert 2: The matched ID (ID 1 for London) should be present
         assertEquals(1, viewModel.matchedCityIds.value.size)
@@ -207,7 +201,6 @@ class MainScreenViewModelTest {
         val successState = viewModel.quizState.value as QuizState.Success
 
         // 2. Find indices for an guaranteed INCORRECT match:
-
         // Example: Find the index of the city name "London" (ID 1)
         val londonNameIndex = successState.cityNames.indexOf("London")
 
@@ -227,5 +220,4 @@ class MainScreenViewModelTest {
         // Assert 2: Matched IDs should remain empty
         assertTrue(viewModel.matchedCityIds.value.isEmpty())
     }
-
 }
