@@ -123,5 +123,130 @@
     "name": "Hong Kong",
     "latitude": 22.3193,
     "longitude": 114.1694
+  },
+  {
+    "name": "Beijing",
+    "latitude": 39.9042,
+    "longitude": 116.4074
+  },
+  {
+    "name": "São Paulo",
+    "latitude": -23.5505,
+    "longitude": -46.6333
+  },
+  {
+    "name": "Delhi",
+    "latitude": 28.7041,
+    "longitude": 77.1025
+  },
+  {
+    "name": "Jakarta",
+    "latitude": -6.2088,
+    "longitude": 106.8456
+  },
+  {
+    "name": "Lagos",
+    "latitude": 6.5244,
+    "longitude": 3.3792
+  },
+  {
+    "name": "Karachi",
+    "latitude": 24.8608,
+    "longitude": 67.0104
+  },
+  {
+    "name": "Manila",
+    "latitude": 14.5995,
+    "longitude": 120.9842
+  },
+  {
+    "name": "Osaka",
+    "latitude": 34.6937,
+    "longitude": 135.5022
+  },
+  {
+    "name": "Madrid",
+    "latitude": 40.4168,
+    "longitude": -3.7038
+  },
+  {
+    "name": "Singapore",
+    "latitude": 1.3521,
+    "longitude": 103.8198
+  },
+  {
+    "name": "Washington, D.C.",
+    "latitude": 38.9072,
+    "longitude": -77.0369
+  },
+  {
+    "name": "Chicago",
+    "latitude": 41.8781,
+    "longitude": -87.6298
+  },
+  {
+    "name": "Riyadh",
+    "latitude": 24.7136,
+    "longitude": 46.6753
+  },
+  {
+    "name": "Kuala Lumpur",
+    "latitude": 3.1390,
+    "longitude": 101.6869
+  },
+  {
+    "name": "San Francisco",
+    "latitude": 37.7749,
+    "longitude": -122.4194
+  },
+  {
+    "name": "Lima",
+    "latitude": -12.0464,
+    "longitude": -77.0428
+  },
+  {
+    "name": "Bogotá",
+    "latitude": 4.7110,
+    "longitude": -74.0721
+  },
+  {
+    "name": "Santiago",
+    "latitude": -33.4489,
+    "longitude": -70.6693
+  },
+  {
+    "name": "Accra",
+    "latitude": 5.6037,
+    "longitude": -0.1870
+  },
+  {
+    "name": "Lisbon",
+    "latitude": 38.7223,
+    "longitude": -9.1393
+  },
+  {
+    "name": "Stockholm",
+    "latitude": 59.3293,
+    "longitude": 18.0686
+  },
+  {
+    "name": "Zurich",
+    "latitude": 47.3769,
+    "longitude": 8.5417
+  },
+  {
+    "name": "Helsinki",
+    "latitude": 60.1699,
+    "longitude": 24.9384
+  },
+  {
+    "name": "Melbourne",
+    "latitude": -37.8136,
+    "longitude": 144.9631
+  },
+  {
+    "name": "Tel Aviv",
+    "latitude": 32.0853,
+    "longitude": 34.7818
   }
 ]
