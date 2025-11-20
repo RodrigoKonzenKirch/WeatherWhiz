@@ -4,7 +4,7 @@ import com.example.weatherwhiz.data.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface WeatherApi {
+interface WeatherApiService {
     @GET("/v1/forecast")
     suspend fun getCurrentWeather(
         @Query("latitude") lat: Double,

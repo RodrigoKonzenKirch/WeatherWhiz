@@ -1,11 +1,11 @@
 package com.example.weatherwhiz.data
 
-import com.example.weatherwhiz.domain.CityRepository
+import com.example.weatherwhiz.domain.WeatherRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class CityRepositoryImpl @Inject constructor(
+class WeatherRepositoryImpl @Inject constructor(
     private val cityDao: CityDao
-) : CityRepository {
+) : WeatherRepository {
     override fun getAllCities(): Flow<List<City>> = cityDao.getAllCities()
 }

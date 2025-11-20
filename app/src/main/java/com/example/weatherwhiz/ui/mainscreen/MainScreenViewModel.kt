@@ -3,7 +3,7 @@ package com.example.weatherwhiz.ui.mainscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherwhiz.data.City
-import com.example.weatherwhiz.domain.CityRepository
+import com.example.weatherwhiz.domain.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,10 +12,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    cityRepository: CityRepository
+    weatherRepository: WeatherRepository
 ) : ViewModel() {
 
-    val cities: StateFlow<List<City>> = cityRepository.getAllCities()
+    val cities: StateFlow<List<City>> = weatherRepository.getAllCities()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

@@ -1,7 +1,7 @@
 package com.example.weatherwhiz.di
 
-import com.example.weatherwhiz.domain.CityRepository
-import com.example.weatherwhiz.data.CityRepositoryImpl
+import com.example.weatherwhiz.domain.WeatherRepository
+import com.example.weatherwhiz.data.WeatherRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -11,5 +11,5 @@ import dagger.hilt.components.SingletonComponent
 @Module
 abstract class RepositoryModule {
     @Binds
-    abstract fun bindCityRepository(impl: CityRepositoryImpl): CityRepository
+    abstract fun bindWeatherRepository(impl: WeatherRepositoryImpl): WeatherRepository
 }
