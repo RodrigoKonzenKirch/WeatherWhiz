@@ -1,19 +1,81 @@
 package com.example.weatherwhiz.ui.mainscreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherwhiz.data.CityEntity
+import com.example.weatherwhiz.data.QuizItem
 import com.example.weatherwhiz.domain.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository
 ) : ViewModel() {
+
+    private val _quizState = MutableStateFlow<QuizState>(QuizState.Idle)
+    val quizState: StateFlow<QuizState> = _quizState.asStateFlow()
+
+    // ----------------------------------------------------
+    // Function to start the data fetching and quiz preparation
+    // ----------------------------------------------------
+    fun loadNewQuiz(selectedCities: List<CityEntity>) {
+        // Use viewModelScope for coroutines tied to the ViewModel's lifecycle
+        viewModelScope.launch {
+            _quizState.value = QuizState.Loading // Set loading state immediately
+
+            try {
+                // 1. Fetch the unified data from the Repository
+                val allQuizItems = weatherRepository.fetchQuizData(selectedCities)
+
+                if (allQuizItems.isEmpty()) {
+                    // Handle case where all API calls failed or city list was empty
+                    _quizState.value = QuizState.Error("Could not fetch data for any selected cities.")
+                    return@launch
+                }
+
+                // 2. Prepare the quiz lists (The core quiz logic!)
+                val (shuffledNames, shuffledWeatherCards) = prepareQuizLists(allQuizItems)
+
+                // 3. Set success state with the prepared data
+                _quizState.value = QuizState.Success(
+                    cityNames = shuffledNames,
+                    weatherCards = shuffledWeatherCards
+                )
+            } catch (e: Exception) {
+                // Set error state if something went wrong in the repository or beyond
+                Log.e("QuizViewModel", "Error loading quiz: ${e.message}")
+                _quizState.value = QuizState.Error("An error occurred while preparing the quiz.")
+            }
+        }
+    }
+
+    // ----------------------------------------------------
+    // Helper function for shuffling the lists
+    // ----------------------------------------------------
+    private fun prepareQuizLists(items: List<QuizItem>): Pair<List<String>, List<WeatherCard>> {
+        // Create the list of city names
+        val cityNames = items.map { it.cityName }.shuffled()
+
+        // Create the list of weather cards
+        val weatherCards = items.map { item ->
+            WeatherCard(
+                cityId = item.cityId,
+                temperature = item.temperature,
+                weatherCode = item.weatherCode
+                // Map other necessary display fields here
+            )
+        }.shuffled() // Shuffle the weather cards
+
+        return Pair(cityNames, weatherCards)
+    }
 
     val cities: StateFlow<List<CityEntity>> = weatherRepository.getAllCities()
         .stateIn(
