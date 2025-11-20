@@ -20,6 +20,8 @@ class MainScreenViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) : ViewModel() {
 
+    private val _wrongGuesses = MutableStateFlow(0)
+    val wrongGuesses: StateFlow<Int> = _wrongGuesses.asStateFlow()
     private val _quizState = MutableStateFlow<QuizState>(QuizState.Idle)
     val quizState: StateFlow<QuizState> = _quizState.asStateFlow()
 
@@ -119,7 +121,7 @@ class MainScreenViewModel @Inject constructor(
             // Add the matched cityId to the set of successfully matched IDs
             _matchedCityIds.value += selectedWeatherCard.cityId
         } else {
-            // Handle incorrect guess (e.g., provide feedback to the UI)
+            _wrongGuesses.value += 1
             Log.d("QuizViewModel", "Incorrect match for $selectedCityName")
         }
 
