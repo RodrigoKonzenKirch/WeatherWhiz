@@ -94,10 +94,6 @@ class MainScreenViewModel @Inject constructor(
         return currentQuizItems.firstOrNull { it.cityName == cityName }?.cityId
     }
 
-    fun getMatchStatus(cityId: Int): Boolean {
-        return _matchedCityIds.value.contains(cityId)
-    }
-
     fun checkMatch(nameIndex: Int, weatherIndex: Int) {
 
         // 1. Ensure the current state is Success and get the shuffled lists
