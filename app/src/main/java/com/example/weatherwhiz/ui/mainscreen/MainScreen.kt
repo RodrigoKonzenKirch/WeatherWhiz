@@ -246,11 +246,13 @@ fun SuccessView(
                 // In a real app, you would pass a CityItem object with the ID.
                 // Since we only have the name here, we have to look it up from the original data (an imperfect, but common compromise).
                 val cityId = viewModel.getCityIdForName(cityName) // Requires new ViewModel function
+                val isMatched = cityId != null && matchedIds.contains(cityId)
 
                 CityNameCard(
                     cityName = cityName,
                     isSelected = index == selectedCityNameIndex,
-                    isMatched = cityId != null && matchedIds.contains(cityId),
+                    isMatched = isMatched,
+                    isEnable = !isMatched,
                     onClick = {
                         selectedCityNameIndex = index
                         // Check if a match is ready to be processed
@@ -273,11 +275,14 @@ fun SuccessView(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(successState.weatherCards) { index, weatherCard ->
+                val isMatched = matchedIds.contains(weatherCard.cityId)
+
                 WeatherCardComposable(
                     card = weatherCard,
                     isSelected = index == selectedWeatherCardIndex,
                     // Pass current match status for visual feedback (e.g., Green/Red border)
-                    isMatched = matchedIds.contains(weatherCard.cityId), // Check its ID
+                    isMatched = isMatched,
+                    isEnable = !isMatched,
                     onClick = {
                         selectedWeatherCardIndex = index
                         if (selectedCityNameIndex != null) {
@@ -297,7 +302,8 @@ fun SuccessView(
 fun CityNameCard(
     cityName: String,
     isSelected: Boolean,
-    isMatched: Boolean, // Added this prop for visual feedback
+    isMatched: Boolean,
+    isEnable: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -316,7 +322,10 @@ fun CityNameCard(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 64.dp)
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick,
+                enabled = isEnable
+            )
             .border(borderWidth, borderColor, RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
@@ -340,7 +349,8 @@ fun CityNameCard(
 fun WeatherCardComposable(
     card: WeatherCard,
     isSelected: Boolean,
-    isMatched: Boolean, // Passed from SuccessView
+    isMatched: Boolean,
+    isEnable: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -356,7 +366,10 @@ fun WeatherCardComposable(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick,
+                enabled = isEnable
+            )
             .border(borderWidth, borderColor, RoundedCornerShape(8.dp)),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
