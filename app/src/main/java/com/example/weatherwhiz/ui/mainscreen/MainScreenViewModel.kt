@@ -23,6 +23,10 @@ class MainScreenViewModel @Inject constructor(
     private val _quizState = MutableStateFlow<QuizState>(QuizState.Idle)
     val quizState: StateFlow<QuizState> = _quizState.asStateFlow()
 
+    private var currentQuizItems: List<QuizItem> = emptyList()
+    private val _matchedCityIds = MutableStateFlow<Set<Int>>(emptySet())
+    val matchedCityIds: StateFlow<Set<Int>> = _matchedCityIds.asStateFlow()
+
     // ----------------------------------------------------
     // Function to start the data fetching and quiz preparation
     // ----------------------------------------------------
@@ -40,6 +44,8 @@ class MainScreenViewModel @Inject constructor(
                     _quizState.value = QuizState.Error("Could not fetch data for any selected cities.")
                     return@launch
                 }
+
+                currentQuizItems = allQuizItems
 
                 // 2. Prepare the quiz lists (The core quiz logic!)
                 val (shuffledNames, shuffledWeatherCards) = prepareQuizLists(allQuizItems)
@@ -76,6 +82,52 @@ class MainScreenViewModel @Inject constructor(
 
         return Pair(cityNames, weatherCards)
     }
+
+    fun getCityIdForName(cityName: String): Int? {
+        return currentQuizItems.firstOrNull { it.cityName == cityName }?.cityId
+    }
+
+    fun getMatchStatus(cityId: Int): Boolean {
+        return _matchedCityIds.value.contains(cityId)
+    }
+
+    fun checkMatch(nameIndex: Int, weatherIndex: Int) {
+
+        // 1. Ensure the current state is Success and get the shuffled lists
+        val currentState = _quizState.value
+        if (currentState !is QuizState.Success) {
+            // Quiz is not active, ignore the tap
+            return
+        }
+
+        // 2. Get the specific data points chosen by the user:
+        val selectedCityName = currentState.cityNames[nameIndex]
+        val selectedWeatherCard = currentState.weatherCards[weatherIndex]
+
+        // 3. Look up the correct cityId for the selected name from the original data
+        // This assumes the name is unique, which is safe for this quiz scope.
+        val correctNameItem = currentQuizItems.firstOrNull { it.cityName == selectedCityName }
+
+        // 4. Verify the match: Does the weather card's cityId match the cityId associated with the name?
+        val isCorrect = correctNameItem?.cityId == selectedWeatherCard.cityId
+
+        if (isCorrect) {
+            // Update the score/state for correct answers
+            // Add the matched cityId to the set of successfully matched IDs
+            _matchedCityIds.value += selectedWeatherCard.cityId
+        } else {
+            // Handle incorrect guess (e.g., provide feedback to the UI)
+            Log.d("QuizViewModel", "Incorrect match for $selectedCityName")
+        }
+
+        // Optional: Add logic here to check if the quiz is complete
+
+    }
+
+
+
+
+
 
     val cities: StateFlow<List<CityEntity>> = weatherRepository.getAllCities()
         .stateIn(
