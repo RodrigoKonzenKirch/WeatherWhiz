@@ -120,6 +120,15 @@ class MainScreenViewModel @Inject constructor(
             // Update the score/state for correct answers
             // Add the matched cityId to the set of successfully matched IDs
             _matchedCityIds.value += selectedWeatherCard.cityId
+
+            if (_matchedCityIds.value.size == currentQuizItems.size) {
+
+                // Transition to GameOver State!
+                _quizState.value = QuizState.GameOver(
+                    finalWrongGuesses = _wrongGuesses.value,
+                    totalCities = currentQuizItems.size
+                )
+            }
         } else {
             _wrongGuesses.value += 1
             Log.d("QuizViewModel", "Incorrect match for $selectedCityName")
@@ -127,6 +136,16 @@ class MainScreenViewModel @Inject constructor(
 
         // Optional: Add logic here to check if the quiz is complete
 
+    }
+
+    fun resetQuiz() {
+        // Reset private variables
+        currentQuizItems = emptyList()
+        _matchedCityIds.value = emptySet()
+        _wrongGuesses.value = 0
+
+        // Set the main state to Idle, which triggers the UI to show the IdleView.
+        _quizState.value = QuizState.Idle
     }
 
 }

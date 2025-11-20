@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.CloudQueue
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Thunderstorm
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WbSunny
@@ -119,8 +120,12 @@ fun MainScreen(
                     viewModel = viewModel
                 )
 
-
-
+                is QuizState.GameOver -> GameOverView(
+                    finalScore = state.value as QuizState.GameOver,
+                    onRestartClicked = {
+                        viewModel.resetQuiz()
+                    }
+                )
             }
         }
 
@@ -237,6 +242,72 @@ private fun ErrorView(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
             Text("Try Again", style = MaterialTheme.typography.titleMedium)
+        }
+    }
+}
+
+@Composable
+private fun GameOverView(
+    finalScore: QuizState.GameOver,
+    onRestartClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val wrongGuesses = finalScore.finalWrongGuesses
+    val totalCities = finalScore.totalCities
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.EmojiEvents,
+            contentDescription = "Game Over",
+            tint = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.size(80.dp)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "Quiz Complete!",
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // --- Score Summary ---
+        Text(
+            text = "You successfully matched $totalCities cities.",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val scoreMessage = if (wrongGuesses == 0) {
+            "Flawless victory! Zero wrong guesses."
+        } else {
+            "Total wrong guesses: $wrongGuesses"
+        }
+
+        Text(
+            text = scoreMessage,
+            style = MaterialTheme.typography.headlineSmall,
+            color = if (wrongGuesses == 0) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        // --- Restart Button ---
+        Button(
+            onClick = onRestartClicked,
+            modifier = Modifier.fillMaxWidth(0.7f),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            Text("Play New Game", style = MaterialTheme.typography.titleMedium)
         }
     }
 }

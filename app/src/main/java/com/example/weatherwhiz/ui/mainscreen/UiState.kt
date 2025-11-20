@@ -9,6 +9,7 @@ sealed class QuizState {
     ) : QuizState()
     data class Error(val message: String) : QuizState()
     data object Idle : QuizState()
+    data class GameOver(val finalWrongGuesses: Int, val totalCities: Int) : QuizState()
 }
 
 // A simple model for the weather cards displayed on the UI
