@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.weatherwhiz.R
 import com.example.weatherwhiz.data.AppDatabase
-import com.example.weatherwhiz.data.City
+import com.example.weatherwhiz.data.CityEntity
 import com.example.weatherwhiz.data.CityDao
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -55,8 +55,8 @@ class DatabaseModule {
                 CoroutineScope(Dispatchers.IO).launch {
                     val cityDao = cityDaoProvider.get()
                     val jsonString = context.resources.openRawResource(R.raw.cities).bufferedReader().use { it.readText() }
-                    val typeToken = object : TypeToken<List<City>>() {}.type
-                    val cities = Gson().fromJson<List<City>>(jsonString, typeToken)
+                    val typeToken = object : TypeToken<List<CityEntity>>() {}.type
+                    val cities = Gson().fromJson<List<CityEntity>>(jsonString, typeToken)
                     cities.forEach { cityDao.insert(it) }
                 }
             }
