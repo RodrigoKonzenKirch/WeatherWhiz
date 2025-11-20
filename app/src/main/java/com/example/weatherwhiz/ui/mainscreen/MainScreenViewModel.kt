@@ -27,13 +27,20 @@ class MainScreenViewModel @Inject constructor(
     private val _matchedCityIds = MutableStateFlow<Set<Int>>(emptySet())
     val matchedCityIds: StateFlow<Set<Int>> = _matchedCityIds.asStateFlow()
 
+    val cities: StateFlow<List<CityEntity>> = weatherRepository.getAllCities()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
     // ----------------------------------------------------
     // Function to start the data fetching and quiz preparation
     // ----------------------------------------------------
     fun loadNewQuiz(selectedCities: List<CityEntity>) {
         // Use viewModelScope for coroutines tied to the ViewModel's lifecycle
         viewModelScope.launch {
-            _quizState.value = QuizState.Loading // Set loading state immediately
+            _quizState.value = QuizState.Loading
 
             try {
                 // 1. Fetch the unified data from the Repository
@@ -124,15 +131,4 @@ class MainScreenViewModel @Inject constructor(
 
     }
 
-
-
-
-
-
-    val cities: StateFlow<List<CityEntity>> = weatherRepository.getAllCities()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList()
-        )
 }
