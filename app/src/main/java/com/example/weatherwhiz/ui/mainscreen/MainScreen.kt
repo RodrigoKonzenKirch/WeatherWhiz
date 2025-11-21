@@ -51,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -136,6 +137,7 @@ fun MainScreen(
     }
 }
 
+
 @Composable
 private fun IdleView(
     onStartQuizClicked: () -> Unit,
@@ -175,13 +177,13 @@ private fun IdleView(
             modifier = Modifier.fillMaxWidth(0.6f),
             contentPadding = PaddingValues(12.dp)
         ) {
-            Text("Start Quiz", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.idle_screen_button_start_quiz), style = MaterialTheme.typography.titleMedium)
         }
     }
 }
 
 @Composable
-private fun LoadingView(
+internal fun LoadingView(
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -232,6 +234,7 @@ private fun ErrorView(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Details: $message",
+            modifier = Modifier.testTag(stringResource(R.string.test_tag_detailed_error_message)),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -245,7 +248,7 @@ private fun ErrorView(
             contentPadding = PaddingValues(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
         ) {
-            Text("Try Again", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.error_view_button_try_again), style = MaterialTheme.typography.titleMedium)
         }
     }
 }
@@ -285,6 +288,7 @@ private fun GameOverView(
         // --- Score Summary ---
         Text(
             text = "You successfully matched $totalCities cities.",
+            modifier = Modifier.testTag(stringResource(R.string.test_tag_score_summary)),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
@@ -311,7 +315,7 @@ private fun GameOverView(
             modifier = Modifier.fillMaxWidth(0.7f),
             contentPadding = PaddingValues(16.dp)
         ) {
-            Text("Play New Game", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.gameoverview_button_play_new_game), style = MaterialTheme.typography.titleMedium)
         }
     }
 }
