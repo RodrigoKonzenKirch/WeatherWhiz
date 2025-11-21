@@ -21,6 +21,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -68,6 +69,32 @@ class MainScreenViewModelTest {
         viewModel.loadNewQuiz(selectedCities)
         testDispatcher.scheduler.runCurrent()
     }
+
+    // Define a simplified list for the game over test
+    private val singleQuizItem = listOf(
+        QuizItem(cityId = 10, cityName = "Berlin", temperature = 10.0, temperatureUnit = "°C", humidity = 70, windSpeed = 10.0, windSpeedUnit = "km/h", weatherCode = 3),
+    )
+
+    // Simplified shuffled data for the single item test
+    private val singleShuffledNames = listOf("Berlin") // Index 0 is ID 10
+    private val singleShuffledWeatherCards = listOf(
+        WeatherCard(cityId = 10, temperature = 10.0, weatherCode = 3)  // Index 0 is ID 10
+    )
+
+    // Helper function for the single-item quiz load
+    private suspend fun setupSingleItemLoad() {
+        // Mock the Repository to return only the single item
+        coEvery { mockRepository.fetchQuizData(any()) } coAnswers { singleQuizItem }
+
+        // Mock the internal shuffling logic to guarantee a known shuffle (optional but makes testing easier)
+        // Note: For a true unit test, we should ONLY mock the repository,
+        // but since we need to know the output order to call checkMatch, this is a pragmatic compromise.
+        // If you can refactor prepareQuizLists to take a Random seed, that's better.
+
+        viewModel.loadNewQuiz(selectedCities) // Call load with any cities; mock returns 'singleQuizItem'
+        testDispatcher.scheduler.runCurrent()
+    }
+
 
     @Before
     fun setup(){
@@ -220,4 +247,117 @@ class MainScreenViewModelTest {
         // Assert 2: Matched IDs should remain empty
         assertTrue(viewModel.matchedCityIds.value.isEmpty())
     }
+
+    @Test
+    fun getCityIdForName_existingCity_returnsCorrectId() = runTest {
+        // Arrange: Load the data to populate the private 'currentQuizItems' list
+        setupSuccessfulLoad()
+
+        // Act
+        val londonId = viewModel.getCityIdForName("London")
+        val parisId = viewModel.getCityIdForName("Paris")
+
+        // Assert
+        assertEquals(1, londonId)
+        assertEquals(2, parisId)
+    }
+
+    @Test
+    fun getCityIdForName_nonExistentCity_returnsNull() = runTest {
+        // Arrange: Load the data to populate the private 'currentQuizItems' list
+        setupSuccessfulLoad()
+
+        // Act
+        val tokyoId = viewModel.getCityIdForName("NotACity") // Not in the test data
+
+        // Assert
+        assertNull(tokyoId)
+    }
+
+    @Test
+    fun getCityIdForName_dataNotLoaded_returnsNull() = runTest {
+        // Arrange: Do NOT call setupSuccessfulLoad(). 'currentQuizItems' is empty.
+
+        // Act
+        val londonId = viewModel.getCityIdForName("London")
+
+        // Assert
+        assertNull(londonId)
+    }
+
+
+
+    @Test
+    fun resetQuiz_resetsAllStatesToInitialValues() = runTest {
+        // Arrange: Put the ViewModel into a successful but messy state
+        setupActiveGameState()
+
+        // Act: Call the function under test
+        viewModel.resetQuiz()
+
+        // 1. Assert UI State: Should be set to Idle
+        assertEquals(QuizState.Idle, viewModel.quizState.value)
+
+        // 2. Assert Match/Score States: Should be empty/zero
+        assertEquals(0, viewModel.matchedCityIds.value.size)
+        assertEquals(0, viewModel.wrongGuesses.value)
+
+        // 3. Assert Internal Data (Check via getter): currentQuizItems should be empty
+        // Since currentQuizItems is private, we verify it's empty by checking a lookup
+        // that relies on it returning null (as it would for an empty list).
+        val result = viewModel.getCityIdForName("London")
+        assertNull(result)
+    }
+
+    // Helper function to simulate a game with activity
+    private fun setupActiveGameState() {
+        // Arrange: Load data successfully
+        coEvery { mockRepository.fetchQuizData(any()) } coAnswers { quizItems }
+        viewModel.loadNewQuiz(selectedCities)
+        testDispatcher.scheduler.runCurrent()
+
+        // Put the ViewModel into a messy, post-game state:
+        // 1. Simulate a correct match (sets a matched ID)
+        viewModel.checkMatch(nameIndex = 0, weatherIndex = 1) // Correct guess for London (ID 1)
+
+        // 2. Simulate an incorrect match (increments wrong guesses)
+        viewModel.checkMatch(nameIndex = 0, weatherIndex = 0) // Incorrect guess (London name vs Paris weather)
+
+        // Assert: Verify pre-reset state is not clean
+        assertTrue(viewModel.matchedCityIds.value.isNotEmpty())
+        assertEquals(1, viewModel.wrongGuesses.value)
+        assertTrue(viewModel.quizState.value is QuizState.Success)
+    }
+
+    @Test
+    fun checkMatch_lastCorrectGuess_transitionsToGameOver() = runTest {
+        // Arrange: Load the single item quiz and ensure one wrong guess occurred previously
+        setupSingleItemLoad()
+
+        // Make sure the quiz is in a success state
+        assertTrue(viewModel.quizState.value is QuizState.Success)
+
+        // Act: Make the final correct match (Berlin name Index 0, Berlin weather Index 0)
+        // Since this is the only item, this should trigger Game Over.
+        viewModel.checkMatch(nameIndex = 0, weatherIndex = 0)
+
+        // Assert 1: Check the final state is Game Over
+        val finalState = viewModel.quizState.value
+        assertTrue(finalState is QuizState.GameOver)
+
+        // Assert 2: Verify the final score and details are correctly carried over
+        val gameOverState = finalState as QuizState.GameOver
+
+        // Wrong guesses should be 2 (from the setup)
+        assertEquals(0, gameOverState.finalWrongGuesses)
+
+        // Total cities should be 1 (from the singleQuizItem list)
+        assertEquals(1, gameOverState.totalCities)
+
+        // Assert 3: Verify the matched IDs list is complete
+        assertEquals(1, viewModel.matchedCityIds.value.size)
+        assertTrue(viewModel.matchedCityIds.value.contains(10))
+    }
+
+
 }

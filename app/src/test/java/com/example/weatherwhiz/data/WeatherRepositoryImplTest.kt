@@ -3,8 +3,11 @@ package com.example.weatherwhiz.data
 import com.example.weatherwhiz.data.remote.WeatherApiService
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -84,6 +87,35 @@ class WeatherRepositoryImplTest {
 
         // Assert
         assertThat(result.size).isEqualTo(0) // Expect an empty list
+    }
+
+    @Test
+    fun getAllCities_emitsDaoData() = runTest {
+        // Arrange: Define the behavior of the mocked DAO.
+        // It must return a Kotlin Flow containing the list of cities.
+        every { mockCityDao.getAllCities() } returns flowOf(cityList)
+
+        // Act: Collect the Flow provided by the Repository.
+        // 'first()' collects the first emission and cancels the Flow.
+        val result = repository.getAllCities().first()
+
+        // Assert: Verify that the Repository returned the exact list of cities
+        // provided by the mocked DAO.
+        assertThat(result.size).isEqualTo(cityList.size)
+        assertThat(result).isEqualTo(cityList)
+    }
+
+    @Test
+    fun getAllCities_emptyList_returnsEmptyFlow() = runTest {
+        // Arrange: Mock the DAO to return an empty Flow.
+        every { mockCityDao.getAllCities() } returns flowOf(emptyList())
+
+        // Act
+        val result = repository.getAllCities().first()
+
+        // Assert: The repository should correctly pass through the empty list.
+        assertThat(result.size).isEqualTo(0)
+        assertThat(result).isEqualTo(emptyList<CityEntity>())
     }
 
 }
