@@ -6,17 +6,11 @@ Weather Whiz is an interactive Android application designed to test a user's geo
 
 This application showcases the full lifecycle of data handling, from network retrieval to complex UI state management and user interaction.
 
-    City Selection: Users can choose from a list of global default cities or add custom locations to create a personalized quiz.
-
-    Concurrent Data Fetching: Efficiently retrieves current weather data for all selected cities simultaneously, optimizing network performance.
-
-    The Matching Quiz: Presents a core-matching challenge where city names and weather cards are displayed in two randomized, distinct lists.
-
-    Interactive Matching: Allows users to select pairs (City Name + Weather Card) using the tap-to-select interaction model.
-
-    State Tracking: Visually indicates successfully matched pairs and prevents further interaction with completed items, ensuring a clear and intuitive user experience.
-
-    Error & Loading States: Provides clear feedback to the user during asynchronous operations (loading spinner) and gracefully handles network failures (retry mechanism).
+- Concurrent Data Fetching: Efficiently retrieves current weather data for all selected cities simultaneously, optimizing network performance.
+- The Matching Quiz: Presents a core-matching challenge where city names and weather cards are displayed in two randomized, distinct lists.
+- Interactive Matching: Allows users to select pairs (City Name + Weather Card) using the tap-to-select interaction model.
+- State Tracking: Visually indicates successfully matched pairs and prevents further interaction with completed items, ensuring a clear and intuitive user experience.
+- Error & Loading States: Provides clear feedback to the user during asynchronous operations (loading spinner) and gracefully handles network failures (retry mechanism).
 
 💻 Technology Stack & Architecture
 
@@ -34,8 +28,10 @@ Core Technologies
 
 ⚙️ How to Run
 
-    Clone the repository: git clone [Your Repo URL]
+Clone the repository: 
 
-    Open the project in Android Studio.
+    git clone https://github.com/RodrigoKonzenKirch/WeatherWhiz.git
 
-    Build and run on an Android device or emulator. No external API key is required as the Open-Meteo API is used for data fetching.
+Open the project in Android Studio.
+
+Build and run on an Android device or emulator. No external API key is required as the Open-Meteo API is used for data fetching.
