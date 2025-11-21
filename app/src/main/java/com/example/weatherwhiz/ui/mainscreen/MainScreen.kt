@@ -317,7 +317,7 @@ private fun GameOverView(
 }
 
 @Composable
-fun SuccessView(
+private fun SuccessView(
     modifier: Modifier = Modifier,
     successState: QuizState.Success,
     viewModel: MainScreenViewModel
@@ -398,7 +398,7 @@ fun SuccessView(
 }
 
 @Composable
-fun CityNameCard(
+private fun CityNameCard(
     cityName: String,
     isSelected: Boolean,
     isMatched: Boolean,
@@ -447,7 +447,7 @@ fun CityNameCard(
 
 
 @Composable
-fun WeatherCardComposable(
+private fun WeatherCardComposable(
     card: WeatherCard,
     isSelected: Boolean,
     isMatched: Boolean,
