@@ -51,11 +51,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.weatherwhiz.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +74,7 @@ fun MainScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Weather Whiz", style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(R.string.top_bar_weather_whiz), style = MaterialTheme.typography.titleLarge)
                 },
                 // Actions slot for the wrong guesses count
                 actions = {
@@ -83,7 +85,7 @@ fun MainScreen(
                         // Icon for the wrong guesses
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Wrong Guesses",
+                            contentDescription = stringResource(R.string.top_bar_wrong_guesses),
                             tint = MaterialTheme.colorScheme.error
                         )
                         Spacer(Modifier.width(4.dp))
@@ -102,7 +104,9 @@ fun MainScreen(
             )
         }
     ) { paddingValues ->
-        Box(modifier.padding(paddingValues).fillMaxSize()) {
+        Box(modifier
+            .padding(paddingValues)
+            .fillMaxSize()) {
             when (state.value){
                 is QuizState.Idle -> IdleView(
                     onStartQuizClicked = {
@@ -146,19 +150,19 @@ private fun IdleView(
     ) {
         Icon(
             imageVector = Icons.Default.Cloud,
-            contentDescription = "Weather Whiz Logo",
+            contentDescription = stringResource(R.string.description_weather_whiz_logo),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(72.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Welcome to Weather Whiz!",
+            text = stringResource(R.string.welcome_to_weather_whiz),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Test your global weather knowledge by matching cities to their current conditions.",
+            text = stringResource(R.string.Idle_screen_explanation_message),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -191,7 +195,7 @@ private fun LoadingView(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Fetching global forecasts...",
+                text = stringResource(R.string.fetching_global_forecasts),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -214,13 +218,13 @@ private fun ErrorView(
     ) {
         Icon(
             imageVector = Icons.Default.Warning,
-            contentDescription = "Error",
+            contentDescription = stringResource(R.string.Icon_error),
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(64.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Oops! Quiz failed to load.",
+            text = stringResource(R.string.failed_to_load_error_message),
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.error
@@ -264,14 +268,14 @@ private fun GameOverView(
     ) {
         Icon(
             imageVector = Icons.Default.EmojiEvents,
-            contentDescription = "Game Over",
+            contentDescription = stringResource(R.string.Icon_game_over),
             tint = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.size(80.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Quiz Complete!",
+            text = stringResource(R.string.Game_over_quiz_complete_message),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -287,7 +291,7 @@ private fun GameOverView(
         Spacer(modifier = Modifier.height(8.dp))
 
         val scoreMessage = if (wrongGuesses == 0) {
-            "Flawless victory! Zero wrong guesses."
+            stringResource(R.string.game_over_zero_wrong_guesses)
         } else {
             "Total wrong guesses: $wrongGuesses"
         }
@@ -331,7 +335,9 @@ fun SuccessView(
     ) {
         // --- LEFT COLUMN: City Names ---
         LazyColumn(
-            modifier = Modifier.weight(1f).fillMaxHeight(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -361,7 +367,9 @@ fun SuccessView(
 
         // --- RIGHT COLUMN: Weather Cards ---
         LazyColumn(
-            modifier = Modifier.weight(1f).fillMaxHeight(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -423,7 +431,9 @@ fun CityNameCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Text(
@@ -467,7 +477,9 @@ fun WeatherCardComposable(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // --- Icon and Temperature ---

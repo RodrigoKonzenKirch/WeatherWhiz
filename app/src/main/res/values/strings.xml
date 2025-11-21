@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Weather Whiz</string>
+    <string name="top_bar_weather_whiz">Weather Whiz</string>
+    <string name="top_bar_wrong_guesses">Wrong Guesses</string>
+    <string name="description_weather_whiz_logo">Weather Whiz Logo</string>
+    <string name="welcome_to_weather_whiz">Welcome to Weather Whiz!</string>
+    <string name="Idle_screen_explanation_message">Test your global weather knowledge by matching cities to their current conditions.</string>
+    <string name="fetching_global_forecasts">Fetching global forecasts...</string>
+    <string name="Icon_error">Error</string>
+    <string name="failed_to_load_error_message">Oops! Quiz failed to load.</string>
+    <string name="Icon_game_over">Game Over</string>
+    <string name="Game_over_quiz_complete_message">Quiz Complete!</string>
+    <string name="game_over_zero_wrong_guesses">Flawless victory! Zero wrong guesses.</string>
 </resources>
