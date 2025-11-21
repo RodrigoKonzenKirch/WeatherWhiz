@@ -1,4 +1,4 @@
-package com.example.weatherwhiz.data
+package com.example.weatherwhiz.domain.models
 
 // Data class for a single item in the quiz (City + its Weather)
 data class QuizItem(

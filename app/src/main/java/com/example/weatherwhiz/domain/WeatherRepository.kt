@@ -1,7 +1,7 @@
 package com.example.weatherwhiz.domain
 
-import com.example.weatherwhiz.data.CityEntity
-import com.example.weatherwhiz.data.QuizItem
+import com.example.weatherwhiz.data.local.CityEntity
+import com.example.weatherwhiz.domain.models.QuizItem
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {

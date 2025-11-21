@@ -1,6 +1,11 @@
 package com.example.weatherwhiz.data
 
+import com.example.weatherwhiz.data.local.CityDao
+import com.example.weatherwhiz.data.local.CityEntity
 import com.example.weatherwhiz.data.remote.WeatherApiService
+import com.example.weatherwhiz.data.remote.WeatherResponse
+import com.example.weatherwhiz.data.remote.CurrentUnits
+import com.example.weatherwhiz.data.remote.CurrentWeather
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
@@ -27,8 +32,10 @@ class WeatherRepositoryImplTest {
 
     private lateinit var repository: WeatherRepositoryImpl
 
-    private val city1 = CityEntity(id = 1, name = "London", latitude = 51.5, longitude = 0.1, isUserAdded = true)
-    private val city2 = CityEntity(id = 2, name = "Paris", latitude = 48.8, longitude = 2.3, isUserAdded = true)
+    private val city1 =
+        CityEntity(id = 1, name = "London", latitude = 51.5, longitude = 0.1, isUserAdded = true)
+    private val city2 =
+        CityEntity(id = 2, name = "Paris", latitude = 48.8, longitude = 2.3, isUserAdded = true)
     private val cityList = listOf(city1, city2)
 
     private val response1 = WeatherResponse(

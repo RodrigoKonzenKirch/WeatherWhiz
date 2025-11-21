@@ -1,4 +1,4 @@
-package com.example.weatherwhiz.data
+package com.example.weatherwhiz.data.remote
 
 // Data class to map the top-level API response
 data class WeatherResponse(

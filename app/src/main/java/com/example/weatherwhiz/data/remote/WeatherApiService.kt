@@ -1,6 +1,5 @@
 package com.example.weatherwhiz.data.remote
 
-import com.example.weatherwhiz.data.WeatherResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

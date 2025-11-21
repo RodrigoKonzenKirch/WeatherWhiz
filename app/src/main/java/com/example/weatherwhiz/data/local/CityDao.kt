@@ -1,4 +1,4 @@
-package com.example.weatherwhiz.data
+package com.example.weatherwhiz.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert

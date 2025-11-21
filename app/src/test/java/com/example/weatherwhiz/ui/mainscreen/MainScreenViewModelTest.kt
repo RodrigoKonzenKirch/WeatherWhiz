@@ -1,8 +1,8 @@
 package com.example.weatherwhiz.ui.mainscreen
 
 import android.util.Log
-import com.example.weatherwhiz.data.CityEntity
-import com.example.weatherwhiz.data.QuizItem
+import com.example.weatherwhiz.data.local.CityEntity
+import com.example.weatherwhiz.domain.models.QuizItem
 import com.example.weatherwhiz.domain.WeatherRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -75,14 +75,8 @@ class MainScreenViewModelTest {
         QuizItem(cityId = 10, cityName = "Berlin", temperature = 10.0, temperatureUnit = "°C", humidity = 70, windSpeed = 10.0, windSpeedUnit = "km/h", weatherCode = 3),
     )
 
-    // Simplified shuffled data for the single item test
-    private val singleShuffledNames = listOf("Berlin") // Index 0 is ID 10
-    private val singleShuffledWeatherCards = listOf(
-        WeatherCard(cityId = 10, temperature = 10.0, weatherCode = 3)  // Index 0 is ID 10
-    )
-
     // Helper function for the single-item quiz load
-    private suspend fun setupSingleItemLoad() {
+    private fun setupSingleItemLoad() {
         // Mock the Repository to return only the single item
         coEvery { mockRepository.fetchQuizData(any()) } coAnswers { singleQuizItem }
 

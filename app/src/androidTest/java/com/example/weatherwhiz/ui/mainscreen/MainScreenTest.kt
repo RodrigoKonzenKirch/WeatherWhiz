@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.example.weatherwhiz.MainActivity
 import com.example.weatherwhiz.R
-import com.example.weatherwhiz.data.CityEntity
+import com.example.weatherwhiz.data.local.CityEntity
 import com.example.weatherwhiz.ui.theme.WeatherWhizTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

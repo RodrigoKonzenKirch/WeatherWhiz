@@ -5,9 +5,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.weatherwhiz.R
-import com.example.weatherwhiz.data.AppDatabase
-import com.example.weatherwhiz.data.CityEntity
-import com.example.weatherwhiz.data.CityDao
+import com.example.weatherwhiz.data.local.AppDatabase
+import com.example.weatherwhiz.data.local.CityEntity
+import com.example.weatherwhiz.data.local.CityDao
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.Module

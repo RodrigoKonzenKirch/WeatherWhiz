@@ -3,8 +3,8 @@ package com.example.weatherwhiz.ui.mainscreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherwhiz.data.CityEntity
-import com.example.weatherwhiz.data.QuizItem
+import com.example.weatherwhiz.data.local.CityEntity
+import com.example.weatherwhiz.domain.models.QuizItem
 import com.example.weatherwhiz.domain.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
