@@ -152,19 +152,19 @@ private fun IdleView(
     ) {
         Icon(
             imageVector = Icons.Default.Cloud,
-            contentDescription = stringResource(R.string.description_weather_whiz_logo),
+            contentDescription = stringResource(R.string.idle_screen_description_weather_whiz_logo),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(72.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.welcome_to_weather_whiz),
+            text = stringResource(R.string.idle_screen_welcome_to_weather_whiz),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.Idle_screen_explanation_message),
+            text = stringResource(R.string.idle_screen_explanation_message),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -197,7 +197,7 @@ internal fun LoadingView(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = stringResource(R.string.fetching_global_forecasts),
+                text = stringResource(R.string.loading_screen_fetching_global_forecasts),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -220,13 +220,13 @@ private fun ErrorView(
     ) {
         Icon(
             imageVector = Icons.Default.Warning,
-            contentDescription = stringResource(R.string.Icon_error),
+            contentDescription = stringResource(R.string.error_screen_Icon_error),
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(64.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.failed_to_load_error_message),
+            text = stringResource(R.string.error_screen_failed_to_load_error_message),
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.error
@@ -234,7 +234,7 @@ private fun ErrorView(
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "Details: $message",
-            modifier = Modifier.testTag(stringResource(R.string.test_tag_detailed_error_message)),
+            modifier = Modifier.testTag(stringResource(R.string.error_screen_test_tag_detailed_error_message)),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -271,14 +271,14 @@ private fun GameOverView(
     ) {
         Icon(
             imageVector = Icons.Default.EmojiEvents,
-            contentDescription = stringResource(R.string.Icon_game_over),
+            contentDescription = stringResource(R.string.game_over_screen_icon),
             tint = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.size(80.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(R.string.Game_over_quiz_complete_message),
+            text = stringResource(R.string.game_over_quiz_complete_message),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -288,7 +288,7 @@ private fun GameOverView(
         // --- Score Summary ---
         Text(
             text = "You successfully matched $totalCities cities.",
-            modifier = Modifier.testTag(stringResource(R.string.test_tag_score_summary)),
+            modifier = Modifier.testTag(stringResource(R.string.game_over_screen_test_tag_score_summary)),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
@@ -315,7 +315,7 @@ private fun GameOverView(
             modifier = Modifier.fillMaxWidth(0.7f),
             contentPadding = PaddingValues(16.dp)
         ) {
-            Text(stringResource(R.string.gameoverview_button_play_new_game), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.game_over_screen_button_play_new_game), style = MaterialTheme.typography.titleMedium)
         }
     }
 }

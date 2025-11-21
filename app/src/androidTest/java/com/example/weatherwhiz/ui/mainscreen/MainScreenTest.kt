@@ -68,9 +68,9 @@ class MainScreenTest{
         }
 
         // Define expected values
-        val iconContentDescription = composeTestRule.activity.getString(R.string.description_weather_whiz_logo)
-        val welcomeMessage = composeTestRule.activity.getString(R.string.welcome_to_weather_whiz)
-        val idleMessage = composeTestRule.activity.getString(R.string.Idle_screen_explanation_message)
+        val iconContentDescription = composeTestRule.activity.getString(R.string.idle_screen_description_weather_whiz_logo)
+        val welcomeMessage = composeTestRule.activity.getString(R.string.idle_screen_welcome_to_weather_whiz)
+        val idleMessage = composeTestRule.activity.getString(R.string.idle_screen_explanation_message)
         val idleButtonMessage = composeTestRule.activity.getString(R.string.idle_screen_button_start_quiz)
 
         // Set initial state to Idle
@@ -101,11 +101,11 @@ class MainScreenTest{
         }
 
         // Define expected values
-        val errorMessage = composeTestRule.activity.getString(R.string.failed_to_load_error_message)
-        val iconContentDescription = composeTestRule.activity.getString(R.string.Icon_error)
+        val errorMessage = composeTestRule.activity.getString(R.string.error_screen_failed_to_load_error_message)
+        val iconContentDescription = composeTestRule.activity.getString(R.string.error_screen_Icon_error)
         val retryButtonMessage = composeTestRule.activity.getString(R.string.error_view_button_try_again)
         val detailedErrorMessage = "This is an error message"
-        val detailedErrorMessageTag = composeTestRule.activity.getString(R.string.test_tag_detailed_error_message)
+        val detailedErrorMessageTag = composeTestRule.activity.getString(R.string.error_screen_test_tag_detailed_error_message)
 
         // Set initial state to Error
         quizStateFlow.value = QuizState.Error(detailedErrorMessage)
@@ -134,7 +134,7 @@ class MainScreenTest{
         }
 
         // Arrange: Define expected values
-        val expectedLoadingMessage = composeTestRule.activity.getString(R.string.fetching_global_forecasts )
+        val expectedLoadingMessage = composeTestRule.activity.getString(R.string.loading_screen_fetching_global_forecasts )
         val topBarWrongGuessMessage = composeTestRule.activity.getString(R.string.top_bar_wrong_guesses)
 
         // Set initial state to Loading
@@ -165,7 +165,7 @@ class MainScreenTest{
         }
 
         // Arrange: Define expected value
-        val expectedLoadingMessage = composeTestRule.activity.getString(R.string.fetching_global_forecasts )
+        val expectedLoadingMessage = composeTestRule.activity.getString(R.string.loading_screen_fetching_global_forecasts )
 
         // Assert A: Loading is visible
         composeTestRule.onNodeWithText(expectedLoadingMessage)
@@ -199,11 +199,11 @@ class MainScreenTest{
         }
 
         // Arrange: Define expected values
-        val gameOverIconDescription = composeTestRule.activity.getString(R.string.Icon_game_over)
-        val gameOverMessage = composeTestRule.activity.getString(R.string.Game_over_quiz_complete_message)
+        val gameOverIconDescription = composeTestRule.activity.getString(R.string.game_over_screen_icon)
+        val gameOverMessage = composeTestRule.activity.getString(R.string.game_over_quiz_complete_message)
         val zeroWrongGuessesMessage = composeTestRule.activity.getString(R.string.game_over_zero_wrong_guesses)
-        val restartButtonMessage = composeTestRule.activity.getString(R.string.gameoverview_button_play_new_game)
-        val scoreSummaryMessage = composeTestRule.activity.getString(R.string.test_tag_score_summary)
+        val restartButtonMessage = composeTestRule.activity.getString(R.string.game_over_screen_button_play_new_game)
+        val scoreSummaryMessage = composeTestRule.activity.getString(R.string.game_over_screen_test_tag_score_summary)
 
         // Set state to gameOver
         quizStateFlow.value = QuizState.GameOver(1, 1)
@@ -234,11 +234,11 @@ class MainScreenTest{
         }
 
         // Arrange: Define expected values
-        val gameOverIconDescription = composeTestRule.activity.getString(R.string.Icon_game_over)
-        val gameOverMessage = composeTestRule.activity.getString(R.string.Game_over_quiz_complete_message)
+        val gameOverIconDescription = composeTestRule.activity.getString(R.string.game_over_screen_icon)
+        val gameOverMessage = composeTestRule.activity.getString(R.string.game_over_quiz_complete_message)
         val zeroWrongGuessesMessage = composeTestRule.activity.getString(R.string.game_over_zero_wrong_guesses)
-        val restartButtonMessage = composeTestRule.activity.getString(R.string.gameoverview_button_play_new_game)
-        val scoreSummaryMessage = composeTestRule.activity.getString(R.string.test_tag_score_summary)
+        val restartButtonMessage = composeTestRule.activity.getString(R.string.game_over_screen_button_play_new_game)
+        val scoreSummaryMessage = composeTestRule.activity.getString(R.string.game_over_screen_test_tag_score_summary)
 
         // Set state to gameOver
         quizStateFlow.value = QuizState.GameOver(0, 1)
