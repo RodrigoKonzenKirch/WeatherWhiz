@@ -5,7 +5,7 @@
     <string name="description_weather_whiz_logo">Weather Whiz Logo</string>
     <string name="welcome_to_weather_whiz">Welcome to Weather Whiz!</string>
     <string name="Idle_screen_explanation_message">Test your global weather knowledge by matching cities to their current conditions.</string>
-    <string name="fetching_global_forecasts">Fetching global forecasts...</string>
+    <string name="fetching_global_forecasts">Fetching global forecasts…</string>
     <string name="Icon_error">Error</string>
     <string name="failed_to_load_error_message">Oops! Quiz failed to load.</string>
     <string name="Icon_game_over">Game Over</string>
