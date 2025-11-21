@@ -54,12 +54,13 @@ class MainScreenViewModel @Inject constructor(
                     return@launch
                 }
 
+                // 2. Store the original unshuffled data for later use
                 currentQuizItems = allQuizItems
 
-                // 2. Prepare the quiz lists (The core quiz logic!)
+                // 3. Prepare the quiz lists (The core quiz logic!)
                 val (shuffledNames, shuffledWeatherCards) = prepareQuizLists(allQuizItems)
 
-                // 3. Set success state with the prepared data
+                // 4. Set success state with the prepared data
                 _quizState.value = QuizState.Success(
                     cityNames = shuffledNames,
                     weatherCards = shuffledWeatherCards
@@ -133,8 +134,6 @@ class MainScreenViewModel @Inject constructor(
             _wrongGuesses.value += 1
             Log.d("QuizViewModel", "Incorrect match for $selectedCityName")
         }
-
-        // Optional: Add logic here to check if the quiz is complete
 
     }
 
