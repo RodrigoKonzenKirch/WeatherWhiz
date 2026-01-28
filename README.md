@@ -1,8 +1,8 @@
-Project: Weather Whiz - Global Weather Matching Quiz
+## Project: Weather Whiz - Global Weather Matching Quiz
 
 Weather Whiz is an interactive Android application designed to test a user's geographical and meteorological knowledge. The app fetches real-time weather data for multiple cities, scrambles the results, and challenges the user to correctly match each city name to its current weather conditions.
 
-🎯 Key Functionalities
+## 🎯 Key Functionalities
 
 This application showcases the full lifecycle of data handling, from network retrieval to complex UI state management and user interaction.
 
@@ -12,7 +12,7 @@ This application showcases the full lifecycle of data handling, from network ret
 - State Tracking: Visually indicates successfully matched pairs and prevents further interaction with completed items, ensuring a clear and intuitive user experience.
 - Error & Loading States: Provides clear feedback to the user during asynchronous operations (loading spinner) and gracefully handles network failures (retry mechanism).
 
-💻 Technology Stack & Architecture
+## 💻 Technology Stack & Architecture
 
 This project is built using modern Android development practices, demonstrating expertise in reactive programming, dependency injection, and testing.
 
@@ -26,9 +26,13 @@ Core Technologies
 - **Hilt:** Simplifies dependency management and ensures clean, modular code.
 - **JUnit 4 & MockK:** Comprehensive unit testing for the Repository (network logic) and ViewModel (state management), including handling asynchronous flows.
 
+## Screenshots
+
+<img src="/../master/screenshots/welcome_screen.png" width="200"> <img src="/../master/screenshots/quiz_screen.png" width="200">
+
 ⚙️ How to Run
 
-Clone the repository: 
+## Clone the repository: 
 
     git clone https://github.com/RodrigoKonzenKirch/WeatherWhiz.git
 
