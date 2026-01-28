@@ -79,23 +79,25 @@ fun MainScreen(
                 },
                 // Actions slot for the wrong guesses count
                 actions = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    ) {
-                        // Icon for the wrong guesses
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = stringResource(R.string.top_bar_wrong_guesses),
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text = "$wrongGuesses",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold
+                    if (state.value is QuizState.Success) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        ) {
+                            // Icon for the wrong guesses
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = stringResource(R.string.top_bar_wrong_guesses),
+                                tint = MaterialTheme.colorScheme.error
                             )
-                        )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = "$wrongGuesses",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
