@@ -8,11 +8,14 @@ import com.example.weatherwhiz.di.IoDispatcher
 import com.example.weatherwhiz.domain.Resource
 import com.example.weatherwhiz.domain.WeatherRepository
 import com.example.weatherwhiz.domain.models.QuizItem
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
@@ -31,6 +34,7 @@ class WeatherRepositoryImpl @Inject constructor(
                             val response = apiService.getCurrentWeather(city.latitude, city.longitude)
                             mapToQuizItem(city, response)
                         } catch (e: Exception) {
+                            if (e is CancellationException) throw e
                             null
                         }
                     }
@@ -39,12 +43,19 @@ class WeatherRepositoryImpl @Inject constructor(
                 val quizItems = deferredResults.awaitAll().filterNotNull()
 
                 if (quizItems.isEmpty() && cities.isNotEmpty()) {
-                    Resource.Error("Could not fetch weather data for any selected cities.")
+                    Resource.Error("Unable to load weather data. Please check your connection.")
                 } else {
                     Resource.Success(quizItems)
                 }
             } catch (e: Exception) {
-                Resource.Error("An unexpected error occurred: ${e.message}", e)
+                if (e is CancellationException) throw e
+                
+                val errorMessage = when (e) {
+                    is IOException -> "Network error. Please check your internet connection."
+                    is HttpException -> "Server error (${e.code()}). Please try again later."
+                    else -> "An unexpected error occurred: ${e.localizedMessage}"
+                }
+                Resource.Error(errorMessage, e)
             }
         }
 
