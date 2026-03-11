@@ -5,6 +5,7 @@ import com.example.weatherwhiz.data.local.CityEntity
 import com.example.weatherwhiz.data.remote.WeatherApiService
 import com.example.weatherwhiz.data.remote.WeatherResponse
 import com.example.weatherwhiz.di.IoDispatcher
+import com.example.weatherwhiz.domain.Resource
 import com.example.weatherwhiz.domain.WeatherRepository
 import com.example.weatherwhiz.domain.models.QuizItem
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,22 +22,30 @@ class WeatherRepositoryImpl @Inject constructor(
 ) : WeatherRepository {
     override fun getAllCities(): Flow<List<CityEntity>> = cityDao.getAllCities()
 
-    override suspend fun fetchQuizData(cities: List<CityEntity>): List<QuizItem> =
+    override suspend fun fetchQuizData(cities: List<CityEntity>): Resource<List<QuizItem>> =
         coroutineScope {
-            val deferredResults = cities.map { city ->
-                async(ioDispatcher) {
-                    try {
-                        val response = apiService.getCurrentWeather(city.latitude, city.longitude)
-
-                        mapToQuizItem(city, response)
-                    } catch (_: Exception) {
-                        null
+            try {
+                val deferredResults = cities.map { city ->
+                    async(ioDispatcher) {
+                        try {
+                            val response = apiService.getCurrentWeather(city.latitude, city.longitude)
+                            mapToQuizItem(city, response)
+                        } catch (e: Exception) {
+                            null
+                        }
                     }
                 }
-            }
 
-            val quizItems = deferredResults.awaitAll()
-            quizItems.filterNotNull()
+                val quizItems = deferredResults.awaitAll().filterNotNull()
+
+                if (quizItems.isEmpty() && cities.isNotEmpty()) {
+                    Resource.Error("Could not fetch weather data for any selected cities.")
+                } else {
+                    Resource.Success(quizItems)
+                }
+            } catch (e: Exception) {
+                Resource.Error("An unexpected error occurred: ${e.message}", e)
+            }
         }
 
     private fun mapToQuizItem(city: CityEntity, response: WeatherResponse): QuizItem {
@@ -53,6 +62,5 @@ class WeatherRepositoryImpl @Inject constructor(
             windSpeedUnit = units.wind_speed_10m,
             weatherCode = weather.weather_code
         )
-
     }
 }

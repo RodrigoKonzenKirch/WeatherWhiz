@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface WeatherRepository {
     fun getAllCities(): Flow<List<CityEntity>>
 
-    suspend fun fetchQuizData(cities: List<CityEntity>): List<QuizItem>
+    suspend fun fetchQuizData(cities: List<CityEntity>): Resource<List<QuizItem>>
 }

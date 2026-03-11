@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherwhiz.data.local.CityEntity
+import com.example.weatherwhiz.domain.Resource
 import com.example.weatherwhiz.domain.models.QuizItem
 import com.example.weatherwhiz.domain.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,59 +37,43 @@ class MainScreenViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    // ----------------------------------------------------
-    // Function to start the data fetching and quiz preparation
-    // ----------------------------------------------------
     fun loadNewQuiz(selectedCities: List<CityEntity>) {
-        // Use viewModelScope for coroutines tied to the ViewModel's lifecycle
         viewModelScope.launch {
             _quizState.value = QuizState.Loading
 
-            try {
-                // 1. Fetch the unified data from the Repository
-                val allQuizItems = weatherRepository.fetchQuizData(selectedCities)
+            when (val result = weatherRepository.fetchQuizData(selectedCities)) {
+                is Resource.Success -> {
+                    val allQuizItems = result.data
+                    currentQuizItems = allQuizItems
 
-                if (allQuizItems.isEmpty()) {
-                    // Handle case where all API calls failed or city list was empty
-                    _quizState.value = QuizState.Error("Could not fetch data for any selected cities.")
-                    return@launch
+                    val (shuffledNames, shuffledWeatherCards) = prepareQuizLists(allQuizItems)
+
+                    _quizState.value = QuizState.Success(
+                        cityNames = shuffledNames,
+                        weatherCards = shuffledWeatherCards
+                    )
                 }
-
-                // 2. Store the original unshuffled data for later use
-                currentQuizItems = allQuizItems
-
-                // 3. Prepare the quiz lists (The core quiz logic!)
-                val (shuffledNames, shuffledWeatherCards) = prepareQuizLists(allQuizItems)
-
-                // 4. Set success state with the prepared data
-                _quizState.value = QuizState.Success(
-                    cityNames = shuffledNames,
-                    weatherCards = shuffledWeatherCards
-                )
-            } catch (e: Exception) {
-                // Set error state if something went wrong in the repository or beyond
-                Log.e("QuizViewModel", "Error loading quiz: ${e.message}")
-                _quizState.value = QuizState.Error("An error occurred while preparing the quiz.")
+                is Resource.Error -> {
+                    Log.e("QuizViewModel", "Error loading quiz: ${result.message}")
+                    _quizState.value = QuizState.Error(result.message)
+                }
+                is Resource.Loading -> {
+                    _quizState.value = QuizState.Loading
+                }
             }
         }
     }
 
-    // ----------------------------------------------------
-    // Helper function for shuffling the lists
-    // ----------------------------------------------------
     private fun prepareQuizLists(items: List<QuizItem>): Pair<List<String>, List<WeatherCard>> {
-        // Create the list of city names
         val cityNames = items.map { it.cityName }.shuffled()
 
-        // Create the list of weather cards
         val weatherCards = items.map { item ->
             WeatherCard(
                 cityId = item.cityId,
                 temperature = item.temperature,
                 weatherCode = item.weatherCode
-                // Map other necessary display fields here
             )
-        }.shuffled() // Shuffle the weather cards
+        }.shuffled()
 
         return Pair(cityNames, weatherCards)
     }
@@ -98,33 +83,22 @@ class MainScreenViewModel @Inject constructor(
     }
 
     fun checkMatch(nameIndex: Int, weatherIndex: Int) {
-
-        // 1. Ensure the current state is Success and get the shuffled lists
         val currentState = _quizState.value
         if (currentState !is QuizState.Success) {
-            // Quiz is not active, ignore the tap
             return
         }
 
-        // 2. Get the specific data points chosen by the user:
         val selectedCityName = currentState.cityNames[nameIndex]
         val selectedWeatherCard = currentState.weatherCards[weatherIndex]
 
-        // 3. Look up the correct cityId for the selected name from the original data
-        // This assumes the name is unique, which is safe for this quiz scope.
         val correctNameItem = currentQuizItems.firstOrNull { it.cityName == selectedCityName }
 
-        // 4. Verify the match: Does the weather card's cityId match the cityId associated with the name?
         val isCorrect = correctNameItem?.cityId == selectedWeatherCard.cityId
 
         if (isCorrect) {
-            // Update the score/state for correct answers
-            // Add the matched cityId to the set of successfully matched IDs
             _matchedCityIds.value += selectedWeatherCard.cityId
 
             if (_matchedCityIds.value.size == currentQuizItems.size) {
-
-                // Transition to GameOver State!
                 _quizState.value = QuizState.GameOver(
                     finalWrongGuesses = _wrongGuesses.value,
                     totalCities = currentQuizItems.size
@@ -134,17 +108,12 @@ class MainScreenViewModel @Inject constructor(
             _wrongGuesses.value += 1
             Log.d("QuizViewModel", "Incorrect match for $selectedCityName")
         }
-
     }
 
     fun resetQuiz() {
-        // Reset private variables
         currentQuizItems = emptyList()
         _matchedCityIds.value = emptySet()
         _wrongGuesses.value = 0
-
-        // Set the main state to Idle, which triggers the UI to show the IdleView.
         _quizState.value = QuizState.Idle
     }
-
 }
