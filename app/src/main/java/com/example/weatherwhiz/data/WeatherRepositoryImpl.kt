@@ -12,8 +12,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.supervisorScope
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -26,27 +26,17 @@ class WeatherRepositoryImpl @Inject constructor(
     override fun getAllCities(): Flow<List<CityEntity>> = cityDao.getAllCities()
 
     override suspend fun fetchQuizData(cities: List<CityEntity>): Resource<List<QuizItem>> =
-        coroutineScope {
+        supervisorScope {
             try {
                 val deferredResults = cities.map { city ->
                     async(ioDispatcher) {
-                        try {
-                            val response = apiService.getCurrentWeather(city.latitude, city.longitude)
-                            mapToQuizItem(city, response)
-                        } catch (e: Exception) {
-                            if (e is CancellationException) throw e
-                            null
-                        }
+                        val response = apiService.getCurrentWeather(city.latitude, city.longitude)
+                        mapToQuizItem(city, response)
                     }
                 }
 
-                val quizItems = deferredResults.awaitAll().filterNotNull()
-
-                if (quizItems.isEmpty() && cities.isNotEmpty()) {
-                    Resource.Error("Unable to load weather data. Please check your connection.")
-                } else {
-                    Resource.Success(quizItems)
-                }
+                val quizItems = deferredResults.awaitAll()
+                Resource.Success(quizItems)
             } catch (e: Exception) {
                 if (e is CancellationException) throw e
                 
