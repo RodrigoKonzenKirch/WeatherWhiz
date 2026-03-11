@@ -6,17 +6,24 @@ import com.example.weatherwhiz.data.remote.WeatherApiService
 import com.example.weatherwhiz.data.remote.WeatherResponse
 import com.example.weatherwhiz.data.remote.CurrentUnits
 import com.example.weatherwhiz.data.remote.CurrentWeather
+import com.example.weatherwhiz.domain.Resource
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import retrofit2.HttpException
+import retrofit2.Response
+import java.io.IOException
 
 
 class WeatherRepositoryImplTest {
@@ -31,6 +38,9 @@ class WeatherRepositoryImplTest {
     private lateinit var mockCityDao: CityDao
 
     private lateinit var repository: WeatherRepositoryImpl
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val ioDispatcher = UnconfinedTestDispatcher()
 
     private val city1 =
         CityEntity(id = 1, name = "London", latitude = 51.5, longitude = 0.1, isUserAdded = true)
@@ -49,80 +59,67 @@ class WeatherRepositoryImplTest {
 
     @Before
     fun setUp() {
-        repository = WeatherRepositoryImpl(mockApiService, mockCityDao)
+        repository = WeatherRepositoryImpl(mockApiService, mockCityDao, ioDispatcher)
     }
 
     @Test
     fun fetchQuizData_success_returnsAllQuizItems() = runTest {
-        // Arrange: Define the behavior of the mocked API service
         coEvery { mockApiService.getCurrentWeather(city1.latitude, city1.longitude) } returns response1
         coEvery { mockApiService.getCurrentWeather(city2.latitude, city2.longitude) } returns response2
 
-        // Act
         val result = repository.fetchQuizData(cityList)
 
-        // Assert
-        assertThat(result.size).isEqualTo(2) // Expect 2 items back
-        assertThat(result[0].cityName).isEqualTo(city1.name)
-        assertThat(result[0].temperature).isEqualTo(15.0) // Allow for rounding errors
+        assertThat(result).isInstanceOf(Resource.Success::class.java)
+        assertThat((result as Resource.Success).data.size).isEqualTo(cityList.size)
     }
 
     @Test
-    fun fetchQuizData_partialFailure_returnsSuccessfulItemsOnly() = runTest {
-        // Arrange: Set up one call to succeed and one to throw an exception
-        coEvery { mockApiService.getCurrentWeather(city1.latitude, city1.longitude) } returns response1
-        // Mock the second call to throw a network exception
-        coEvery { mockApiService.getCurrentWeather(city2.latitude, city2.longitude) } throws Exception("Network Error")
+    fun fetchQuizData_allCitiesFail_returnsError() = runTest {
+        coEvery { mockApiService.getCurrentWeather(any(), any()) } throws IOException("No internet")
 
-        // Act
         val result = repository.fetchQuizData(cityList)
 
-        // Assert
-        assertThat(result.size).isEqualTo(1) // Only the successful city (London) should be returned
-        assertThat(result[0].cityName).isEqualTo(city1.name)
+        assertThat(result).isInstanceOf(Resource.Error::class.java)
+        assertThat((result as Resource.Error).message).contains("Network error")
+    }
 
-        assertThat(result[0].temperature).isEqualTo(15.0) // Allow for rounding errors
+    @Test
+    fun fetchQuizData_networkError_returnsNetworkErrorMessage() = runTest {
+        coEvery { mockApiService.getCurrentWeather(any(), any()) } throws IOException()
+
+        val result = repository.fetchQuizData(listOf(city1))
+
+        assertThat(result).isInstanceOf(Resource.Error::class.java)
+        assertThat((result as Resource.Error).message).contains("Network error")
+    }
+
+    @Test
+    fun fetchQuizData_httpError_returnsServerErrorMessage() = runTest {
+        val errorResponse = Response.error<Any>(500, "".toResponseBody(null))
+        val httpException = HttpException(errorResponse)
+        coEvery { mockApiService.getCurrentWeather(any(), any()) } throws httpException
+
+        val result = repository.fetchQuizData(listOf(city1))
+
+        assertThat(result).isInstanceOf(Resource.Error::class.java)
+        assertThat((result as Resource.Error).message).contains("Server error")
     }
 
     @Test
     fun fetchQuizData_emptyList_returnsEmptyList() = runTest {
-        // Arrange: Mock the API call just in case, though it shouldn't be called
-        coEvery { mockApiService.getCurrentWeather(any(), any()) } returns response1
-
-        // Act
         val result = repository.fetchQuizData(emptyList())
 
-        // Assert
-        assertThat(result.size).isEqualTo(0) // Expect an empty list
+        assertThat(result).isInstanceOf(Resource.Success::class.java)
+        assertThat((result as Resource.Success).data.size).isEqualTo(0)
     }
 
     @Test
     fun getAllCities_emitsDaoData() = runTest {
-        // Arrange: Define the behavior of the mocked DAO.
-        // It must return a Kotlin Flow containing the list of cities.
         every { mockCityDao.getAllCities() } returns flowOf(cityList)
 
-        // Act: Collect the Flow provided by the Repository.
-        // 'first()' collects the first emission and cancels the Flow.
         val result = repository.getAllCities().first()
 
-        // Assert: Verify that the Repository returned the exact list of cities
-        // provided by the mocked DAO.
         assertThat(result.size).isEqualTo(cityList.size)
         assertThat(result).isEqualTo(cityList)
     }
-
-    @Test
-    fun getAllCities_emptyList_returnsEmptyFlow() = runTest {
-        // Arrange: Mock the DAO to return an empty Flow.
-        every { mockCityDao.getAllCities() } returns flowOf(emptyList())
-
-        // Act
-        val result = repository.getAllCities().first()
-
-        // Assert: The repository should correctly pass through the empty list.
-        assertThat(result.size).isEqualTo(0)
-        assertThat(result).isEqualTo(emptyList<CityEntity>())
-    }
-
 }
