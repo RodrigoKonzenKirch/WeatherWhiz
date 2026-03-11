@@ -4,9 +4,10 @@ import com.example.weatherwhiz.data.local.CityDao
 import com.example.weatherwhiz.data.local.CityEntity
 import com.example.weatherwhiz.data.remote.WeatherApiService
 import com.example.weatherwhiz.data.remote.WeatherResponse
+import com.example.weatherwhiz.di.IoDispatcher
 import com.example.weatherwhiz.domain.WeatherRepository
 import com.example.weatherwhiz.domain.models.QuizItem
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -15,14 +16,15 @@ import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
     private val apiService: WeatherApiService,
-    private val cityDao: CityDao
+    private val cityDao: CityDao,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : WeatherRepository {
     override fun getAllCities(): Flow<List<CityEntity>> = cityDao.getAllCities()
 
     override suspend fun fetchQuizData(cities: List<CityEntity>): List<QuizItem> =
         coroutineScope {
             val deferredResults = cities.map { city ->
-                async(Dispatchers.IO) {
+                async(ioDispatcher) {
                     try {
                         val response = apiService.getCurrentWeather(city.latitude, city.longitude)
 
