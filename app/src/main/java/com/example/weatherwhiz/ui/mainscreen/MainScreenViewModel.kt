@@ -71,7 +71,9 @@ class MainScreenViewModel @Inject constructor(
             WeatherCard(
                 cityId = item.cityId,
                 temperature = item.temperature,
-                weatherCode = item.weatherCode
+                weatherCode = item.weatherCode,
+                humidity = item.humidity,
+                windSpeed = item.windSpeed
             )
         }.shuffled()
 
