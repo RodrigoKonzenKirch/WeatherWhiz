@@ -17,5 +17,6 @@ data class WeatherCard(
     val cityId: Int, // The ID is needed to check the match!
     val temperature: Double,
     val weatherCode: Int, // For displaying the icon
-    // ... other display properties
+    val humidity: Int,
+    val windSpeed: Double
 )

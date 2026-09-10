@@ -41,7 +41,7 @@ class MainScreenTest{
 
     // Test data
     val cityNamesList = listOf("CityA", "CityB")
-    val weatherCardsList = listOf(WeatherCard(0,10.0,0), WeatherCard(0, 20.0, 1))
+    val weatherCardsList = listOf(WeatherCard(0,10.0,0, 50, 5.0), WeatherCard(0, 20.0, 1, 60, 10.0))
 
 
     @Before

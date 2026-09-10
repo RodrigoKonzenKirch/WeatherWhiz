@@ -506,16 +506,21 @@ private fun WeatherCardComposable(
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // --- Details (Humidity, Wind) ---
-            Column {
-                // Need to pass humidity and wind speed in WeatherCard data class
-                // Text(text = "Humidity: ${card.humidity}%", style = MaterialTheme.typography.bodyMedium)
-                // Text(text = "Wind: ${card.windSpeed} km/h", style = MaterialTheme.typography.bodyMedium)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = remember(card.weatherCode) { mapWmoCodeToDescription(card.weatherCode) },
                     style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = "Humidity: ${card.humidity}%",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Wind: ${card.windSpeed} km/h",
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
